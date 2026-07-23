@@ -1,0 +1,22 @@
+import { Loader2 } from "lucide-react";
+import { cn } from "../../lib/utils";
+
+interface SpinnerProps {
+  className?: string;
+  label?: string;
+}
+
+const Spinner = ({ className, label }: SpinnerProps) => (
+  <div className="flex flex-col items-center justify-center gap-3 text-muted">
+    <Loader2 className={cn("h-6 w-6 animate-spin text-brand-500", className)} />
+    {label && <p className="text-sm">{label}</p>}
+  </div>
+);
+
+export const FullScreenSpinner = ({ label = "Loading…" }: { label?: string }) => (
+  <div className="flex h-screen items-center justify-center">
+    <Spinner label={label} />
+  </div>
+);
+
+export default Spinner;
