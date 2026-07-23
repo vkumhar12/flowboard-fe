@@ -11,7 +11,9 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+.next
 *.local
+*.tsbuildinfo
 
 # Editor / OS
 .vscode/*
@@ -28,3 +30,13 @@ dist-ssr
 .env
 .env.*
 !.env.example
+
+# This working directory also holds the separate flowboard-be project and
+# whole-monorepo docs locally (see main branch), which aren't part of this
+# flowboard-fe-only branch/repo.
+/flowboard-be/
+/README.md
+/ARCHITECTURE.md
+/DEPLOYMENT.md
+/CLAUDE.md
+/note.md

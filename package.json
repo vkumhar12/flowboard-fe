@@ -2,14 +2,10 @@
   "name": "flowboard-fe",
   "private": true,
   "version": "0.0.0",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
   "scripts": {
-    "dev:dashboard": "npm run dev --workspace=apps/dashboard",
-    "dev:landing": "npm run dev --workspace=apps/landing",
-    "build:dashboard": "npm run build --workspace=apps/dashboard",
-    "build:landing": "npm run build --workspace=apps/landing"
+    "dev:dashboard": "pnpm --filter @flowboard/dashboard dev",
+    "dev:landing": "pnpm --filter @flowboard/landing dev",
+    "build:dashboard": "pnpm --filter @flowboard/dashboard build",
+    "build:landing": "pnpm --filter @flowboard/landing build"
   }
 }
