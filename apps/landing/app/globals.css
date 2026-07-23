@@ -1,0 +1,17 @@
+@import "tailwindcss";
+@import "../../../packages/shared/styles/theme.css";
+
+/* next/font (see app/layout.tsx) loads Inter/Space Grotesk and exposes them
+   as these two CSS variables; point the shared theme's font tokens at them
+   so every "font-sans"/"font-display" Tailwind class picks up the
+   self-hosted, layout-shift-free fonts instead of the shared theme's
+   fallback stack. */
+:root {
+  --font-sans: var(--font-sans-override);
+  --font-display: var(--font-display-override);
+}
+
+html,
+body {
+  height: 100%;
+}

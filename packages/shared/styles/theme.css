@@ -1,0 +1,486 @@
+/* ----------------------------------------------------------------------------
+   Flowboard — electric light theme
+   Aesthetic: cool slate-white page (Surface) · crisp white surfaces that float ·
+              a single electric-blue accent · Midnight ink for dark UI chrome
+              and text · a vivid multi-hue accent set (cyan, emerald, lime,
+              amber, coral, rose, violet) for status/priority/tags/avatars.
+              Premium comes from restraint + depth (bg ≠ surface), not decoration.
+   Type:    Space Grotesk (display) + Inter (body)
+
+   Shared by both apps/dashboard and apps/landing so the two apps never
+   visually drift apart — import this file once from each app's own root
+   stylesheet, after the "@import tailwindcss" line.
+---------------------------------------------------------------------------- */
+@theme {
+  /* surfaces — page is Surface, cards are pure White ON TOP of it */
+  --color-bg: #f8fafc; /* Surface — cool slate-white page */
+  --color-surface: #ffffff; /* White — cards float on the bg */
+  --color-surface-2: #f1f5f9; /* tracks, neutral chips, hover fills */
+  --color-elevated: #e2e8f0; /* pressed / stronger neutral */
+  --color-line: #e2e8f0; /* near-invisible hairline */
+
+  --color-ink: #0f172a; /* Midnight — primary text & dark UI chrome */
+
+  /* brand — Electric Blue */
+  --color-brand-50: #eff6ff;
+  --color-brand-100: #dbeafe;
+  --color-brand-300: #93c5fd;
+  --color-brand-400: #60a5fa;
+  --color-brand-500: #2563eb;
+  --color-brand-600: #1d4ed8;
+  --color-brand-700: #1e40af;
+
+  --color-muted: #475569;
+  --color-faint: #94a3b8;
+
+  --color-priority-low: #06b6d4; /* Cyan */
+  --color-priority-medium: #f59e0b; /* Amber */
+  --color-priority-high: #f97316; /* Coral */
+  --color-priority-urgent: #f43f5e; /* Rose */
+
+  /* extra accents from the palette — used for columns, avatars, charts */
+  --color-accent-emerald: #10b981;
+  --color-accent-lime: #84cc16;
+  --color-accent-violet: #7c3aed;
+
+  /* admin role badge (Team page) — its own pastel pairing, not part of the
+     brand/priority scales, so it gets dedicated tokens */
+  --color-badge-admin-bg: #fef3e2;
+  --color-badge-admin-text: #b45309;
+
+  /* column accents — a 7-color rotation assigned to kanban columns by index.
+     Each has a solid "dot", a low-opacity "soft" fill, and a "ring" outline. */
+  --column-accent-1-dot: #2563eb;
+  --column-accent-1-soft: rgba(37, 99, 235, 0.06);
+  --column-accent-1-ring: rgba(37, 99, 235, 0.22);
+  --column-accent-2-dot: #f43f5e;
+  --column-accent-2-soft: rgba(244, 63, 94, 0.06);
+  --column-accent-2-ring: rgba(244, 63, 94, 0.22);
+  --column-accent-3-dot: #f59e0b;
+  --column-accent-3-soft: rgba(245, 158, 11, 0.07);
+  --column-accent-3-ring: rgba(245, 158, 11, 0.24);
+  --column-accent-4-dot: #06b6d4;
+  --column-accent-4-soft: rgba(6, 182, 212, 0.06);
+  --column-accent-4-ring: rgba(6, 182, 212, 0.22);
+  --column-accent-5-dot: #7c3aed;
+  --column-accent-5-soft: rgba(124, 58, 237, 0.06);
+  --column-accent-5-ring: rgba(124, 58, 237, 0.22);
+  --column-accent-6-dot: #10b981;
+  --column-accent-6-soft: rgba(16, 185, 129, 0.06);
+  --column-accent-6-ring: rgba(16, 185, 129, 0.22);
+  --column-accent-7-dot: #f97316;
+  --column-accent-7-soft: rgba(249, 115, 22, 0.06);
+  --column-accent-7-ring: rgba(249, 115, 22, 0.22);
+
+  /* avatar palette — 8-color rotation picked deterministically per user id */
+  --avatar-1: #2563eb;
+  --avatar-2: #06b6d4;
+  --avatar-3: #10b981;
+  --avatar-4: #84cc16;
+  --avatar-5: #f59e0b;
+  --avatar-6: #f97316;
+  --avatar-7: #f43f5e;
+  --avatar-8: #7c3aed;
+
+  --radius-xl: 1.1rem;
+  --radius-pill: 999px;
+
+  --font-sans:
+    "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    sans-serif;
+  --font-display:
+    "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  /* signature easing — used for nearly every transition */
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* refined, slate-tinted layered shadows */
+  --shadow-card:
+    0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.04);
+  --shadow-soft:
+    0 8px 24px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(15, 23, 42, 0.04);
+  --shadow-lift:
+    0 20px 50px rgba(15, 23, 42, 0.14), 0 6px 16px rgba(15, 23, 42, 0.07);
+  --shadow-brand: 0 10px 28px rgba(37, 99, 235, 0.32);
+}
+
+/* ----------------------------------------------------------------------------
+   Dark theme — overrides every color/shadow custom property declared above.
+   Applied via [data-theme="dark"] on <html> (see the dashboard app's
+   main.tsx and Settings page), the same attribute-selector pattern already
+   used for [data-reduce-motion]. Every component uses Tailwind utility
+   classes generated FROM these variables (bg-surface, text-ink,
+   bg-brand-500, ...) — none of them hardcode a color — so overriding the
+   variables here re-themes the entire app without touching component files.
+
+   Note on the brand ramp: in the light theme, higher steps (600/700) are
+   literally darker, used as extra-emphasis TEXT on a light/white background
+   (e.g. "bg-brand-50 text-brand-700" chips). On a dark background that
+   relationship has to flip — darker text would be unreadable — so here the
+   ramp keeps its SEMANTIC meaning (700 = most emphasis) but its direction
+   inverts: 50/100 become dark background tints, 700 becomes the brightest,
+   most saturated blue. This lets every existing "bg-brand-50 text-brand-700"
+   usage keep working unchanged.
+---------------------------------------------------------------------------- */
+[data-theme="dark"] {
+  --color-bg: #0b1220; /* deepest layer — page recedes behind cards */
+  --color-surface: #131b2e; /* card surface, one step up from bg */
+  --color-surface-2: #1b2438; /* tracks, neutral chips, hover fills */
+  --color-elevated: #263049; /* pressed / stronger neutral */
+  --color-line: #26314a; /* hairline, visible-but-quiet against dark surfaces */
+
+  --color-ink: #f1f5f9; /* near-white text — not pure white, avoids halation */
+
+  /* brand — Electric Blue, ramp direction inverted (see note above) */
+  --color-brand-50: #16233e;
+  --color-brand-100: #1c2c4d;
+  --color-brand-300: #7fb0fd;
+  --color-brand-400: #5b9bfb;
+  --color-brand-500: #3b82f6; /* lightened from #2563eb for AA contrast on dark */
+  --color-brand-600: #60a5fa;
+  --color-brand-700: #93c5fd;
+
+  --color-muted: #94a3b8;
+  --color-faint: #64748b;
+
+  /* priority + accent hues — lightened one step so they stay legible on dark */
+  --color-priority-low: #22d3ee;
+  --color-priority-medium: #fbbf24;
+  --color-priority-high: #fb923c;
+  --color-priority-urgent: #fb7185;
+
+  --color-accent-emerald: #34d399;
+  --color-accent-lime: #a3e635;
+  --color-accent-violet: #a78bfa;
+
+  --color-badge-admin-bg: #3a2712;
+  --color-badge-admin-text: #fbbf24;
+
+  --column-accent-1-dot: #60a5fa;
+  --column-accent-1-soft: rgba(96, 165, 250, 0.1);
+  --column-accent-1-ring: rgba(96, 165, 250, 0.3);
+  --column-accent-2-dot: #fb7185;
+  --column-accent-2-soft: rgba(251, 113, 133, 0.1);
+  --column-accent-2-ring: rgba(251, 113, 133, 0.3);
+  --column-accent-3-dot: #fbbf24;
+  --column-accent-3-soft: rgba(251, 191, 36, 0.1);
+  --column-accent-3-ring: rgba(251, 191, 36, 0.3);
+  --column-accent-4-dot: #22d3ee;
+  --column-accent-4-soft: rgba(34, 211, 238, 0.1);
+  --column-accent-4-ring: rgba(34, 211, 238, 0.3);
+  --column-accent-5-dot: #a78bfa;
+  --column-accent-5-soft: rgba(167, 139, 250, 0.1);
+  --column-accent-5-ring: rgba(167, 139, 250, 0.3);
+  --column-accent-6-dot: #34d399;
+  --column-accent-6-soft: rgba(52, 211, 153, 0.1);
+  --column-accent-6-ring: rgba(52, 211, 153, 0.3);
+  --column-accent-7-dot: #fb923c;
+  --column-accent-7-soft: rgba(251, 146, 60, 0.12);
+  --column-accent-7-ring: rgba(251, 146, 60, 0.32);
+
+  --avatar-1: #60a5fa;
+  --avatar-2: #22d3ee;
+  --avatar-3: #34d399;
+  --avatar-4: #a3e635;
+  --avatar-5: #fbbf24;
+  --avatar-6: #fb923c;
+  --avatar-7: #fb7185;
+  --avatar-8: #a78bfa;
+
+  /* dark surfaces need darker, higher-opacity shadows — a light ambient
+     shadow that reads on white is nearly invisible on near-black */
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.28), 0 1px 3px rgba(0, 0, 0, 0.24);
+  --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.38), 0 2px 6px rgba(0, 0, 0, 0.22);
+  --shadow-lift: 0 20px 50px rgba(0, 0, 0, 0.5), 0 6px 16px rgba(0, 0, 0, 0.3);
+  --shadow-brand: 0 10px 28px rgba(59, 130, 246, 0.35);
+}
+
+/* ----------------------------------------------------------------------------
+   Base
+---------------------------------------------------------------------------- */
+* {
+  border-color: var(--color-line);
+}
+
+/* user preference (Settings → Reduce motion) */
+[data-reduce-motion="true"] *,
+[data-reduce-motion="true"] *::before,
+[data-reduce-motion="true"] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "cv01", "cv02", "ss01";
+}
+
+button,
+[role="button"] {
+  cursor: pointer;
+}
+
+button:disabled,
+[role="button"][aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+/* Ambient brand wash — keeps the off-white page alive */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(
+      60rem 42rem at 92% -14%,
+      rgba(37, 99, 235, 0.1),
+      transparent 60%
+    ),
+    radial-gradient(
+      48rem 40rem at -10% 110%,
+      rgba(6, 182, 212, 0.08),
+      transparent 55%
+    );
+  pointer-events: none;
+}
+
+[data-theme="dark"] body::before {
+  background:
+    radial-gradient(
+      60rem 42rem at 92% -14%,
+      rgba(59, 130, 246, 0.16),
+      transparent 60%
+    ),
+    radial-gradient(
+      48rem 40rem at -10% 110%,
+      rgba(34, 211, 238, 0.12),
+      transparent 55%
+    );
+}
+
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #d3d2e4;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #bfbdd6;
+  background-clip: padding-box;
+}
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* ----------------------------------------------------------------------------
+   Components
+---------------------------------------------------------------------------- */
+@layer components {
+  .glass {
+    background: color-mix(in oklab, var(--color-bg) 72%, transparent);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+  }
+
+  .card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-card);
+  }
+
+  /* shared field styles — radius is applied per-field in the component
+     (pills for single-line, rounded-2xl for textareas) */
+  .input-base {
+    width: 100%;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    padding: 0.6rem 1rem;
+    color: var(--color-ink);
+    font-size: 0.875rem;
+    outline: none;
+    transition:
+      border-color 0.18s var(--ease-spring),
+      box-shadow 0.18s var(--ease-spring);
+  }
+  .input-base::placeholder {
+    color: var(--color-faint);
+  }
+  .input-base:focus {
+    border-color: color-mix(in oklab, var(--color-brand-500) 55%, transparent);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.16);
+  }
+
+  .focus-ring:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--color-bg),
+      0 0 0 4px var(--color-brand-500);
+  }
+
+  /* the brand gradient, reusable — Midnight → Electric Blue */
+  .brand-gradient {
+    background-image: linear-gradient(
+      140deg,
+      #0f172a 0%,
+      #1d4ed8 52%,
+      #2563eb 100%
+    );
+  }
+}
+
+@layer utilities {
+  .animate-in {
+    animation: fade-in 0.24s var(--ease-spring) both;
+  }
+  /* slowly pan the brand gradient so the hero panel feels alive */
+  .animate-gradient-pan {
+    background-size: 220% 220%;
+    animation: gradient-pan 14s ease-in-out infinite;
+  }
+  /* self-drawing line animation for outline (lucide) icons — loops forever.
+     used on the TOP layer; a static base icon sits underneath. */
+  .icon-draw :is(path, line, polyline, polygon, circle, rect, ellipse) {
+    stroke: var(--trace-stroke, currentColor);
+    stroke-dasharray: 120;
+    stroke-dashoffset: 120;
+  }
+  .icon-draw.is-drawing :is(path, line, polyline, polygon, circle, rect, ellipse) {
+    animation: icon-draw 3s ease-in-out infinite;
+    animation-delay: var(--draw-delay, 0s);
+  }
+  /* never leave an icon stuck hidden when motion is reduced */
+  @media (prefers-reduced-motion: reduce) {
+    .icon-draw :is(path, line, polyline, polygon, circle, rect, ellipse) {
+      stroke-dashoffset: 0;
+      animation: none;
+    }
+  }
+  [data-reduce-motion="true"] .icon-draw :is(path, line, polyline, polygon, circle, rect, ellipse) {
+    stroke-dashoffset: 0;
+    animation: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* tabular numbers — every metric & count uses this so digits don't jitter */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+  /* diagonal hatch — used for "empty / no data" chart bars */
+  .hatch {
+    background-image: repeating-linear-gradient(
+      135deg,
+      color-mix(in oklab, var(--color-ink) 8%, transparent) 0 1.5px,
+      transparent 1.5px 7px
+    );
+  }
+  .text-gradient {
+    background-image: linear-gradient(135deg, #2563eb 0%, #06b6d4 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* drifting pan for the hero brand gradient */
+@keyframes gradient-pan {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* stroke draw-on for outline icons — draw in, hold, then erase out */
+@keyframes icon-draw {
+  0% {
+    stroke-dashoffset: 120;
+  }
+  40% {
+    stroke-dashoffset: 0;
+  }
+  60% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -120;
+  }
+}
+
+/* Skeleton shimmer */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-surface-2);
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.75),
+    transparent
+  );
+  animation: shimmer 1.5s infinite;
+}
+[data-theme="dark"] .skeleton::after {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.12),
+    transparent
+  );
+}
