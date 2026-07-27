@@ -1,9 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import Modal from "../ui/Modal";
-import Button from "../ui/Button";
-import { Input, Textarea } from "../ui/Input";
+import { Modal, Button, Input, Textarea } from "@flowboard/shared";
 import { useBoards } from "../../context/BoardsContext";
 import { cn, errorMessage } from "../../lib/utils";
 

@@ -3,7 +3,7 @@ import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { Plus, MoreHorizontal, Trash2, Sparkles, Pencil, CheckSquare, ArrowUpDown, ChevronLeft, Check } from "lucide-react";
 import TaskCard from "./TaskCard";
-import ConfirmDialog from "../ui/ConfirmDialog";
+import { ConfirmDialog } from "@flowboard/shared";
 import { cn, columnAccent } from "../../lib/utils";
 import { sortTasks, SORT_OPTIONS, type SortKey, type SortDirection } from "../../lib/taskSort";
 import { type Column as ColumnType, type Task } from "@flowboard/shared";

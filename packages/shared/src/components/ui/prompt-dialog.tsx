@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
-import Modal from "./Modal";
-import Button from "./Button";
-import { Input } from "./Input";
+import { Modal } from "./modal";
+import { Button } from "./button";
+import { Input } from "./input";
 
-interface PromptDialogProps {
+export interface PromptDialogProps {
   open: boolean;
   onClose?: () => void;
   onSubmit: (value: string) => void;
@@ -20,7 +20,7 @@ interface PromptDialogProps {
  * Reusable single-field prompt modal (replaces window.prompt).
  * Calls onSubmit(trimmedValue) when confirmed.
  */
-const PromptDialog = ({
+export const PromptDialog = ({
   open,
   onClose,
   onSubmit,

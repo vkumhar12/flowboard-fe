@@ -1,9 +1,7 @@
 import { useState, useEffect, type ReactNode } from "react";
 import toast from "react-hot-toast";
 import { Upload, FileText, Kanban } from "lucide-react";
-import Modal from "../ui/Modal";
-import Button from "../ui/Button";
-import { Select } from "../ui/Input";
+import { Modal, Button, Select } from "@flowboard/shared";
 import { errorMessage } from "../../lib/utils";
 import {
   parseCsvSource,

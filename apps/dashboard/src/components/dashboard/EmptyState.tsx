@@ -1,5 +1,5 @@
 import { Plus, Sparkles } from "lucide-react";
-import Button from "../ui/Button";
+import { Button } from "@flowboard/shared";
 
 interface EmptyStateProps {
   onCreate: () => void;

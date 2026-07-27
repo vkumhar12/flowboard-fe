@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Activity, X } from "lucide-react";
 import { boardApi } from "@/services";
 import { getSocket } from "../lib/socket";
-import Avatar from "./ui/Avatar";
+import { Avatar } from "@flowboard/shared";
 import { relativeTime } from "../lib/utils";
 import { type Activity as ActivityItem } from "@flowboard/shared";
 

@@ -5,9 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import { useLayout } from "../components/layout/AppLayout";
 import { useWorkspace } from "../hooks/useWorkspace";
 import Topbar from "../components/layout/Topbar";
-import Button from "../components/ui/Button";
-import Avatar from "../components/ui/Avatar";
-import ConfirmDialog from "../components/ui/ConfirmDialog";
+import { Button, Avatar, ConfirmDialog } from "@flowboard/shared";
 import { cn } from "../lib/utils";
 
 interface SwitchProps {

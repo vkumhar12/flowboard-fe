@@ -1,8 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown, Trash2, X } from "lucide-react";
-import Button from "../ui/Button";
-import ConfirmDialog from "../ui/ConfirmDialog";
-import { type Column } from "@flowboard/shared";
+import { Button, ConfirmDialog, type Column } from "@flowboard/shared";
 
 interface BulkActionToolbarProps {
   count: number;

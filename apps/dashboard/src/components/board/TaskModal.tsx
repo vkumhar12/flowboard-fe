@@ -1,11 +1,7 @@
 import { useState, useEffect, type ChangeEvent, type FormEvent } from "react";
 import toast from "react-hot-toast";
 import { Trash2, GitBranch, Loader2 } from "lucide-react";
-import Modal from "../ui/Modal";
-import Button from "../ui/Button";
-import ConfirmDialog from "../ui/ConfirmDialog";
-import { Input, Textarea, Select } from "../ui/Input";
-import { PRIORITIES } from "../../lib/utils";
+import { Modal, Button, ConfirmDialog, Input, Textarea, Select, PRIORITIES } from "@flowboard/shared";
 import { type Column, type Task, type TaskPriority, type BoardMember } from "@flowboard/shared";
 import type { useBoard } from "../../hooks/useBoard";
 

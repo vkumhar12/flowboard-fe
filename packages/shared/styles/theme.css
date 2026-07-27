@@ -85,6 +85,52 @@
   --radius-xl: 1.1rem;
   --radius-pill: 999px;
 
+  /* ---- shadcn/ui semantic tokens -----------------------------------------
+     shadcn's generated components (Dialog, Select, DropdownMenu, Card, ...)
+     are styled with utility classes like `bg-popover` / `text-foreground` /
+     `border-border`, which Tailwind only generates if a matching
+     `--color-*` value exists in this @theme block. Rather than adopting
+     shadcn's own default palette (which would look visually disconnected
+     from the rest of Flowboard), each one below is wired to an existing
+     Flowboard token so shadcn components render in the same electric-blue
+     theme — light/dark included — with zero extra styling. */
+  --color-background: var(--color-bg);
+  --color-foreground: var(--color-ink);
+  --color-card: var(--color-surface);
+  --color-card-foreground: var(--color-ink);
+  --color-popover: var(--color-surface);
+  --color-popover-foreground: var(--color-ink);
+  --color-primary: var(--color-brand-500);
+  --color-primary-foreground: #ffffff;
+  --color-secondary: var(--color-surface-2);
+  --color-secondary-foreground: var(--color-ink);
+  /* Not aliasing shadcn's "muted" token here: Flowboard already has a
+     --color-muted token (text color, used as `text-muted` everywhere —
+     see button.tsx's labelCls, Badge, AvatarStack, etc). shadcn's "muted"
+     is a different concept (a subtle background fill, paired with
+     muted-foreground for its text) — redeclaring it under the same name
+     would either self-reference or silently override the existing text
+     token. None of these components use `bg-muted`/`text-muted-foreground`
+     (they use `bg-surface-2`/`text-muted` directly), so it's simply omitted. */
+  --color-accent: var(--color-surface-2);
+  --color-accent-foreground: var(--color-ink);
+  --color-destructive: var(--color-priority-urgent);
+  --color-destructive-foreground: #ffffff;
+  --color-border: var(--color-line);
+  --color-input: var(--color-line);
+  --color-ring: var(--color-brand-500);
+  /* shadcn's default corner radius (0.5rem) reads sharper than Flowboard's
+     existing pill/rounded-3xl language, so this reuses the app's own scale
+     instead of shadcn's stock value. */
+  --radius: var(--radius-xl);
+
+  /* dialog/popover/select open+close animations, driven off Radix's
+     [data-state] attribute (see components/ui/dialog.tsx, select.tsx). */
+  --animate-overlay-in: overlay-in 0.2s ease-out both;
+  --animate-overlay-out: overlay-out 0.15s ease-in both;
+  --animate-dialog-in: dialog-in 0.22s var(--ease-spring) both;
+  --animate-dialog-out: dialog-out 0.15s ease-in both;
+
   --font-sans:
     "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     sans-serif;
@@ -449,6 +495,44 @@ h3,
   }
   100% {
     stroke-dashoffset: -120;
+  }
+}
+
+/* Radix overlay/content open+close (Dialog, Select, DropdownMenu, Popover) */
+@keyframes overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes overlay-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+@keyframes dialog-out {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.98) translateY(4px);
   }
 }
 

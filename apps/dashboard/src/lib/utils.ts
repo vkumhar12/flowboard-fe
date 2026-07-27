@@ -1,21 +1,11 @@
 import { formatDistanceToNow, format, isPast, isToday, isTomorrow } from "date-fns";
 
-import { type TaskPriority } from "@flowboard/shared";
+import { cn, PRIORITIES, priorityMeta, initials, colorFromId } from "@flowboard/shared";
 
-type ClassValue = string | false | null | undefined | ClassValue[];
-
-/** Tiny classnames joiner (no extra deps). */
-export const cn = (...args: ClassValue[]): string => args.flat().filter(Boolean).join(" ");
-
-export const PRIORITIES: { value: TaskPriority; label: string; color: string }[] = [
-  { value: "low", label: "Low", color: "var(--color-priority-low)" },
-  { value: "medium", label: "Medium", color: "var(--color-priority-medium)" },
-  { value: "high", label: "High", color: "var(--color-priority-high)" },
-  { value: "urgent", label: "Urgent", color: "var(--color-priority-urgent)" },
-];
-
-export const priorityMeta = (value?: string) =>
-  PRIORITIES.find((p) => p.value === value) || PRIORITIES[1];
+// Re-exported from @flowboard/shared so every existing "./lib/utils" import
+// in this app keeps working — see packages/shared/src/lib/{utils,priority,avatar}.ts
+// for the canonical implementations, shared with the shadcn/ui components.
+export { cn, PRIORITIES, priorityMeta, initials, colorFromId };
 
 // Accents assigned to columns by index (Linear/Notion-style boards).
 // Each entry references a CSS custom property (not a literal hex) so the
@@ -33,26 +23,6 @@ const COLUMN_ACCENTS = [
 
 export const columnAccent = (index = 0) =>
   COLUMN_ACCENTS[((index % COLUMN_ACCENTS.length) + COLUMN_ACCENTS.length) % COLUMN_ACCENTS.length];
-
-export const initials = (name = ""): string =>
-  name
-    .trim()
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((w) => w[0]?.toUpperCase())
-    .join("") || "?";
-
-/** Deterministic avatar color from a string id — vivid palette to match the electric theme.
- *  References CSS custom properties (see --avatar-* in index.css) so avatars re-theme in dark mode. */
-export const colorFromId = (id = ""): string => {
-  const palette = [
-    "var(--avatar-1)", "var(--avatar-2)", "var(--avatar-3)", "var(--avatar-4)",
-    "var(--avatar-5)", "var(--avatar-6)", "var(--avatar-7)", "var(--avatar-8)",
-  ];
-  let hash = 0;
-  for (let i = 0; i < id.length; i++) hash = id.charCodeAt(i) + ((hash << 5) - hash);
-  return palette[Math.abs(hash) % palette.length];
-};
 
 export const relativeTime = (date?: string | null): string => {
   if (!date) return "";

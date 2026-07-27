@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { useLayout } from "../components/layout/AppLayout";
 import { useWorkspace } from "../hooks/useWorkspace";
 import Topbar from "../components/layout/Topbar";
-import Avatar from "../components/ui/Avatar";
+import { Avatar } from "@flowboard/shared";
 import { cn } from "../lib/utils";
 import LazyRender from "../components/ui/LazyRender";
 

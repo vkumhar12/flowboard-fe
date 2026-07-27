@@ -7,8 +7,7 @@ import {
 } from "lucide-react";
 import { useBoards } from "../../context/BoardsContext";
 import { useAuth } from "../../context/AuthContext";
-import Avatar from "../ui/Avatar";
-import ConfirmDialog from "../ui/ConfirmDialog";
+import { Avatar, ConfirmDialog } from "@flowboard/shared";
 import FavoriteStar from "../board/FavoriteStar";
 import EditBoardModal from "../board/EditBoardModal";
 import { cn, errorMessage } from "../../lib/utils";

@@ -5,8 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import { useLayout } from "../components/layout/AppLayout";
 import { useWorkspace } from "../hooks/useWorkspace";
 import Topbar from "../components/layout/Topbar";
-import { PriorityTag } from "../components/ui/Badge";
-import { FilterSelect } from "../components/ui/Input";
+import { PriorityTag, FilterSelect } from "@flowboard/shared";
 import { PRIORITIES, formatDueDate, cn } from "../lib/utils";
 import { type WorkspaceTask } from "@flowboard/shared";
 

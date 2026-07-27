@@ -1,8 +1,6 @@
-import { cn } from "../../lib/utils";
+import { Skeleton } from "@flowboard/shared";
 
-export const Skeleton = ({ className }: { className?: string }) => (
-  <div className={cn("skeleton rounded-md", className)} />
-);
+export { Skeleton };
 
 export const BoardCardSkeleton = () => (
   <div className="card space-y-3 rounded-3xl p-5">

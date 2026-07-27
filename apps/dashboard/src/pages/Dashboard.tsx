@@ -15,7 +15,7 @@ import { useBoards } from "../context/BoardsContext";
 import { useAuth } from "../context/AuthContext";
 import { useLayout } from "../components/layout/AppLayout";
 import Topbar from "../components/layout/Topbar";
-import Button from "../components/ui/Button";
+import { Button } from "@flowboard/shared";
 import { BoardCardSkeleton } from "../components/ui/Skeleton";
 import { relativeTime } from "../lib/utils";
 import LazyRender from "../components/ui/LazyRender";

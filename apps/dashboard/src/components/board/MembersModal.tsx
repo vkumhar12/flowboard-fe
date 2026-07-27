@@ -1,13 +1,8 @@
 import { useState, type FormEvent, type Dispatch, type SetStateAction } from "react";
 import toast from "react-hot-toast";
 import { UserPlus, X } from "lucide-react";
-import Modal from "../ui/Modal";
-import Button from "../ui/Button";
-import { Input } from "../ui/Input";
-import Avatar from "../ui/Avatar";
-import ConfirmDialog from "../ui/ConfirmDialog";
+import { Modal, Button, Input, Avatar, ConfirmDialog, type BoardMember } from "@flowboard/shared";
 import { boardApi } from "@/services";
-import { type BoardMember } from "@flowboard/shared";
 
 import { errorMessage } from "../../lib/utils";
 

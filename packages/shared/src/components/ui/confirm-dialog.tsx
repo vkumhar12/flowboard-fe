@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
-import Modal from "./Modal";
-import Button from "./Button";
+import { Modal } from "./modal";
+import { Button } from "./button";
 
-interface ConfirmDialogProps {
+export interface ConfirmDialogProps {
   open: boolean;
   onClose?: () => void;
   onConfirm?: () => void;
@@ -14,10 +14,8 @@ interface ConfirmDialogProps {
   loading?: boolean;
 }
 
-/**
- * Reusable confirmation modal (replaces window.confirm).
- */
-const ConfirmDialog = ({
+/** Reusable confirmation modal (replaces window.confirm). */
+export const ConfirmDialog = ({
   open,
   onClose,
   onConfirm,

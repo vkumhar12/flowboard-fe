@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Plus, Search, Command } from "lucide-react";
 import { useLayout } from "./AppLayout";
-import Button from "../ui/Button";
+import { Button } from "@flowboard/shared";
 
 interface TopbarProps {
   title?: ReactNode;

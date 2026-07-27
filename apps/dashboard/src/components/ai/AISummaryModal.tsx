@@ -1,7 +1,7 @@
 import { useState, useEffect, type ComponentType } from "react";
 import toast from "react-hot-toast";
 import { FileText, Loader2, CheckCircle2, Clock, AlertTriangle, ArrowRight } from "lucide-react";
-import Modal from "../ui/Modal";
+import { Modal } from "@flowboard/shared";
 import { aiApi } from "@/services";
 import { type AISummary } from "@flowboard/shared";
 

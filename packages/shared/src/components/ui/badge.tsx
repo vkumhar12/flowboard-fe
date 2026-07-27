@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { cn } from "../../lib/utils";
-import { priorityMeta } from "../../lib/utils";
+import { priorityMeta } from "../../lib/priority";
 
 interface PriorityBadgeProps {
   priority?: string;
@@ -40,7 +40,7 @@ export const PriorityTag = ({ priority, className }: PriorityBadgeProps) => {
   );
 };
 
-interface BadgeProps {
+export interface BadgeProps {
   children?: ReactNode;
   className?: string;
 }

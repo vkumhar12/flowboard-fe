@@ -1,10 +1,7 @@
 import { useState, useEffect, type FormEvent } from "react";
 import toast from "react-hot-toast";
 import { Sparkles, Loader2, Check } from "lucide-react";
-import Modal from "../ui/Modal";
-import Button from "../ui/Button";
-import { Input, Select } from "../ui/Input";
-import { PriorityBadge } from "../ui/Badge";
+import { Modal, Button, Input, Select, PriorityBadge } from "@flowboard/shared";
 import { aiApi } from "@/services";
 import { type Column, type Task, type AISuggestion } from "@flowboard/shared";
 

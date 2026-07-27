@@ -2,8 +2,7 @@ import { memo } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Calendar, CheckSquare, Square } from "lucide-react";
-import Avatar from "../ui/Avatar";
-import { PriorityTag } from "../ui/Badge";
+import { Avatar, PriorityTag } from "@flowboard/shared";
 import { cn, formatDueDate } from "../../lib/utils";
 import { type Task } from "@flowboard/shared";
 

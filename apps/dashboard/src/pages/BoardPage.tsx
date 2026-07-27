@@ -1,24 +1,18 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { Sparkles, FileText, Users, Activity, Search, ChevronLeft, Trash2, Pencil, MoreVertical, Star, Upload } from "lucide-react";
+import { Search, Flag, Users, X } from "lucide-react";
 import { useBoard } from "../hooks/useBoard";
-import { useLayout } from "../components/layout/AppLayout";
 import { useBoards } from "../context/BoardsContext";
-import FavoriteStar from "../components/board/FavoriteStar";
-import ExportMenu from "../components/board/ExportMenu";
 import ImportModal from "../components/board/ImportModal";
-import ConfirmDialog from "../components/ui/ConfirmDialog";
 import { aiApi } from "@/services";
-import { PRIORITIES, errorMessage, cn } from "../lib/utils";
+import { PRIORITIES, errorMessage } from "../lib/utils";
 import { type Task, type TaskPriority } from "@flowboard/shared";
+import { Button, ConfirmDialog, FilterSelect, PromptDialog } from "@flowboard/shared";
 
-import Topbar from "../components/layout/Topbar";
-import Button from "../components/ui/Button";
-import { FilterSelect } from "../components/ui/Input";
-import { AvatarStack } from "../components/ui/Avatar";
+import BoardTopbar from "../components/board/BoardTopbar";
+import BoardActionsMenu from "../components/board/BoardActionsMenu";
 import { ColumnSkeleton } from "../components/ui/Skeleton";
-import PromptDialog from "../components/ui/PromptDialog";
 import KanbanBoard from "../components/board/KanbanBoard";
 import TaskModal from "../components/board/TaskModal";
 import MembersModal from "../components/board/MembersModal";
@@ -26,6 +20,8 @@ import EditBoardModal from "../components/board/EditBoardModal";
 import AIGenerateModal from "../components/ai/AIGenerateModal";
 import AISummaryModal from "../components/ai/AISummaryModal";
 import ActivityFeed from "../components/ActivityFeed";
+import QuickAddBar from "../components/board/QuickAddBar";
+import { parseQuickAddInput } from "../lib/quickAddParser";
 
 interface TaskModalState {
   open: boolean;
@@ -40,7 +36,6 @@ interface AiGenState {
 
 const BoardPage = () => {
   const { boardId } = useParams<{ boardId: string }>();
-  const { openCreateBoard } = useLayout();
   const b = useBoard(boardId);
   const { boards, remove: removeBoard, toggleFavorite } = useBoards();
   const navigate = useNavigate();
@@ -54,6 +49,7 @@ const BoardPage = () => {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [editBoardOpen, setEditBoardOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
+  const [quickAddOpen, setQuickAddOpen] = useState(false);
 
   const [filterPriority, setFilterPriority] = useState<TaskPriority | "">("");
   const [filterAssignee, setFilterAssignee] = useState("");
@@ -78,7 +74,49 @@ const BoardPage = () => {
     });
   }, [b.tasks, filterPriority, filterAssignee, search]);
 
+  // Cmd/Ctrl+P is intentionally scoped to this page (not AppLayout, where the
+  // Cmd+K palette lives) since quick-add needs this board's live columns,
+  // members and createTask mutation, none of which AppLayout has.
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "p") {
+        e.preventDefault();
+        setQuickAddOpen(true);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
+
   if (!boardId) return null;
+
+  // Errors (including the guards below) are left to propagate to
+  // QuickAddBar's caller instead of being caught here, so the bar stays
+  // open and keeps the typed text on failure — matching how TaskModal
+  // only closes after a successful createTask (see useBoard.ts).
+  const handleQuickAdd = async (raw: string) => {
+    const firstColumn = b.columns[0];
+    if (!firstColumn) {
+      toast.error("Add a column before quick-adding a task");
+      throw new Error("No column to add to");
+    }
+    const parsed = parseQuickAddInput(raw, b.members);
+    if (!parsed.title.trim()) {
+      toast.error("Title is required");
+      throw new Error("Title is required");
+    }
+    // No try/catch here: b.createTask's own mutation already toasts on
+    // failure (see useBoard.ts's createTaskMutation onError), so this just
+    // lets a rejection propagate up to QuickAddBar instead of toasting twice.
+    await b.createTask({
+      column_id: firstColumn.id,
+      title: parsed.title,
+      due_date: parsed.due_date,
+      assignee_id: parsed.assignee_id,
+      ...(parsed.priority ? { priority: parsed.priority } : {}),
+    });
+    toast.success("Task added");
+  };
 
   const handleBreakdown = async (task: Task) => {
     try {
@@ -109,72 +147,15 @@ const BoardPage = () => {
     );
   }
 
-  const actions = (
-    <div className="flex items-center gap-2">
-      {b.presence.length > 0 && (
-        <div className="mr-1.5 hidden items-center gap-2 sm:flex">
-          <span className="text-[11px] font-medium text-faint">Viewing</span>
-          <AvatarStack users={b.presence} size="xs" max={3} />
-        </div>
-      )}
-
-      <Button size="sm" onClick={() => setAiGen({ open: true, columnId: b.columns[0]?.id ?? null })} className="gap-1.5">
-        <Sparkles className="h-4 w-4" /> <span className="hidden lg:inline">AI tasks</span>
-      </Button>
-
-      <Button size="sm" variant="outline" onClick={() => setSummaryOpen(true)} className="gap-1.5">
-        <FileText className="h-4 w-4" /> <span className="hidden lg:inline">Summary</span>
-      </Button>
-
-      {b.board && <ExportMenu board={b.board} columns={b.columns} tasks={b.tasks} />}
-
-      <Button size="sm" variant="outline" onClick={() => setImportOpen(true)} className="gap-1.5">
-        <Upload className="h-4 w-4" /> <span className="hidden lg:inline">Import</span>
-      </Button>
-
-      <div className="flex items-center rounded-2xl border border-line bg-surface p-0.5 shadow-[var(--shadow-card)]">
-        <button
-          type="button"
-          onClick={() => setMembersOpen(true)}
-          title="Board Members"
-          className="flex h-8 w-8 items-center justify-center rounded-xl text-muted transition-colors hover:bg-surface-2 hover:text-ink"
-        >
-          <Users className="h-4 w-4" />
-        </button>
-        <button
-          type="button"
-          onClick={() => setActivityOpen(true)}
-          title="Activity Log"
-          className="flex h-8 w-8 items-center justify-center rounded-xl text-muted transition-colors hover:bg-surface-2 hover:text-ink"
-        >
-          <Activity className="h-4 w-4" />
-        </button>
-      </div>
-    </div>
-  );
-
   return (
     <>
-      <Topbar
-        title={
-          <div className="flex items-center gap-2.5">
-            <Link to="/dashboard" className="text-faint hover:text-ink md:hidden" title="Back to dashboard">
-              <ChevronLeft className="h-4 w-4" />
-            </Link>
-            {b.board ? (
-              <div className="flex items-center gap-2.5">
-                <span className="h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: b.board.color }} />
-                <span className="font-display text-lg font-bold tracking-tight text-ink">{b.board.title}</span>
-                <FavoriteStar boardId={b.board.id} isFavorite={isFavorite} className="hover:bg-surface-2" />
-              </div>
-            ) : (
-              "Loading…"
-            )}
-          </div>
-        }
-        subtitle={b.board?.description}
-        actions={actions}
-        onCreateBoard={openCreateBoard}
+      <BoardTopbar
+        board={b.board}
+        isFavorite={isFavorite}
+        presence={b.presence}
+        onQuickAdd={() => setQuickAddOpen(true)}
+        onAiTasks={() => setAiGen({ open: true, columnId: b.columns[0]?.id ?? null })}
+        onSummary={() => setSummaryOpen(true)}
       />
 
       {/* Filter bar */}
@@ -184,8 +165,8 @@ const BoardPage = () => {
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search tasks"
-            className="h-9 w-52 rounded-full border border-line bg-surface pl-9 pr-4 text-xs shadow-[var(--shadow-card)] outline-none transition-all duration-200 focus:border-brand-500/50 focus:ring-2 focus:ring-brand-500/15"
+            placeholder="Search tasks…"
+            className="h-9 w-52 rounded-full border border-line bg-surface pl-9 pr-4 text-xs font-medium tracking-tight shadow-[var(--shadow-card)] outline-none transition-all duration-200 placeholder:text-faint focus:border-brand-500/50 focus:ring-2 focus:ring-brand-500/15"
           />
         </div>
         <FilterSelect value={filterPriority} onChange={(e) => setFilterPriority(e.target.value as TaskPriority | "")}>
@@ -199,14 +180,23 @@ const BoardPage = () => {
         {(filterPriority || filterAssignee || search) && (
           <button
             onClick={() => { setFilterPriority(""); setFilterAssignee(""); setSearch(""); }}
-            className="rounded-full px-3 py-1.5 text-xs font-medium text-faint transition-colors hover:bg-surface-2 hover:text-ink"
+            className="inline-flex items-center gap-1.5 rounded-full border border-red-200 bg-red-50/60 px-3 py-1.5 text-xs font-semibold text-red-600 transition-all duration-150 hover:bg-red-100/80 active:scale-[0.97]"
           >
-            Clear
+            <X className="h-3 w-3" />
+            Clear filters
           </button>
         )}
-        <span className="ml-auto rounded-full bg-surface-2 px-3 py-1 text-xs font-medium tabular text-muted">
+        <span className="ml-auto rounded-full bg-surface-2 px-3 py-1 text-xs font-semibold tabular text-muted">
           {filteredTasks.length} tasks
         </span>
+        <BoardActionsMenu
+          board={b.board}
+          columns={b.columns}
+          tasks={b.tasks}
+          onImport={() => setImportOpen(true)}
+          onMembers={() => setMembersOpen(true)}
+          onActivity={() => setActivityOpen(true)}
+        />
       </div>
 
       {/* Board */}
@@ -260,6 +250,7 @@ const BoardPage = () => {
       <ActivityFeed open={activityOpen} onClose={() => setActivityOpen(false)} boardId={boardId} />
       <EditBoardModal open={editBoardOpen} onClose={() => setEditBoardOpen(false)} board={b.board} />
       <ImportModal open={importOpen} onClose={() => setImportOpen(false)} columns={b.columns} actions={b} />
+      <QuickAddBar open={quickAddOpen} onClose={() => setQuickAddOpen(false)} onSubmit={handleQuickAdd} members={b.members} />
       <PromptDialog
         open={addColumnOpen}
         onClose={() => setAddColumnOpen(false)}
